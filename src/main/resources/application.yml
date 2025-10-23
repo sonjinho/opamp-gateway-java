@@ -1,0 +1,30 @@
+server:
+  port: 4320
+  servlet:
+    session:
+      cookie:
+        name: SESSION
+        secure: false
+        http-only: true
+        same-site: Strict
+        max-age: 1800
+spring:
+  application.name: opamp
+  devtools.add-properties: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:workflow}
+    username: ${DB_USER:workflow}
+    password: ${DB_PASSWORD:changeMe!}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: false
+  sql:
+    init:
+      mode: never
+      encoding: UTF-8

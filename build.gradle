@@ -1,0 +1,105 @@
+import com.google.protobuf.gradle.GenerateProtoTask
+
+plugins {
+	id 'java'
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+	id 'com.google.protobuf' version '0.9.5'
+}
+
+group = 'io.opentelemetry'
+version = '0.0.1-SNAPSHOT'
+description = 'OpenTelemetry Openamp gateway'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util
+    implementation 'com.google.protobuf:protobuf-java-util:4.33.0'
+
+    implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.1'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    // H2 Database (runtime)
+//    runtimeOnly 'com.h2database:h2'
+
+    // Protobuf
+    implementation 'com.google.protobuf:protobuf-java:4.28.2' // 최신 버전으로 업데이트
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // slf4j
+    implementation 'org.slf4j:slf4j-api'
+    implementation 'ch.qos.logback:logback-classic'
+
+    // Test Dependencies
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += "$buildDir/generated/source/proto/main/java"
+		}
+		proto {
+			srcDirs += 'src/main/proto'
+		}
+	}
+}
+
+protobuf {
+	protoc {
+		artifact = 'com.google.protobuf:protoc:4.28.2' // 최신 버전으로 업데이트
+	}
+	generateProtoTasks {
+		all().forEach { task ->
+			task.builtins {
+				java {}
+			}
+		}
+	}
+}
+
+
+tasks.named('test') {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+tasks.named('asciidoctor') {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
