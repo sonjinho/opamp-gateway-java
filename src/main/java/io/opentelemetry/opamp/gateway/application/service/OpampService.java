@@ -18,14 +18,8 @@ public class OpampService {
 
     public Opamp.ServerToAgent processRequest(Opamp.AgentToServer request) {
         AgentToServerDomain agentToServer = mapper.mapperToDomain(request);
-        log.info("Agent To Server: {}", agentToServer);
         return Opamp.ServerToAgent.newBuilder()
                 .setInstanceUid(ByteString.copyFrom(UUIDUtil.INSTANCE.convertUUIDToBytes(agentToServer.instanceId())))
-                .setAgentIdentification(
-                        Opamp.AgentIdentification.newBuilder()
-                                .setNewInstanceUid(ByteString.copyFrom(UUIDUtil.INSTANCE.convertUUIDToBytes(UUIDUtil.INSTANCE.generateUUIDv7())))
-                                .build()
-                )
                 .setCapabilities(agentToServer.capabilities())
                 .build();
     }
