@@ -1,8 +1,12 @@
 package io.opentelemetry.opamp.gateway.adapter.inbound.web;
 
-import io.opentelemetry.opamp.gateway.application.service.OpampService;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageLite;
+import io.opentelemetry.opamp.gateway.application.usecase.OpampUseCase;
+import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
+import io.opentelemetry.opamp.gateway.mapper.AgentToServerMapper;
+import io.opentelemetry.opamp.gateway.mapper.ServerToAgentMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import opamp.proto.Opamp;
 import org.springframework.stereotype.Component;
@@ -15,13 +19,12 @@ import java.util.Arrays;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class OpampWebSocketHandler extends AbstractWebSocketHandler {
     // OpampService는 그대로 사용합니다.
-    private final OpampService service;
-
-    public OpampWebSocketHandler(OpampService service) {
-        this.service = service;
-    }
+    private final OpampUseCase service;
+    private final AgentToServerMapper agentToServerMapper;
+    private final ServerToAgentMapper serverToAgentMapper;
 
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
@@ -31,9 +34,9 @@ public class OpampWebSocketHandler extends AbstractWebSocketHandler {
             Opamp.AgentToServer requestBody = Opamp.AgentToServer.parseFrom(payload);
             log.debug("Received OpAMP message: {}", requestBody);
 
-            Opamp.ServerToAgent responseBody = service.processRequest(requestBody);
+            ServerToAgentDomain responseBody = service.processRequest(agentToServerMapper.mapperToDomain(requestBody));
 
-            byte[] responseBytes = encodeOpampWS(responseBody);
+            byte[] responseBytes = encodeOpampWS(serverToAgentMapper.mapperToProto(responseBody));
 
             session.sendMessage(new BinaryMessage(responseBytes));
 

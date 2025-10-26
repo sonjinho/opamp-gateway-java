@@ -1,4 +1,4 @@
-package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.entity;
+package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.jpa.entity;
 
 import io.opentelemetry.opamp.gateway.domain.agent.RemoteConfigStatusDomain;
 import jakarta.persistence.*;
@@ -32,5 +32,20 @@ public class AgentRemoteConfigStatusEntity {
                 errorMessage
         );
 
+    }
+
+    public void merge(AgentRemoteConfigStatusEntity target) {
+        if (target.hash != null) {
+            this.hash = target.hash;
+        }
+        if (target.lastRemoteConfigHash != null) {
+            this.lastRemoteConfigHash = target.lastRemoteConfigHash;
+        }
+        if (target.status != null) {
+            this.status = target.status;
+        }
+        if (target.errorMessage != null) {
+            this.errorMessage = target.errorMessage;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package io.opentelemetry.opamp.gateway.mapper;
 
-import io.opentelemetry.opamp.gateway.domain.agent.*;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import io.opentelemetry.opamp.gateway.domain.agent.*;
 import opamp.proto.Anyvalue;
 import opamp.proto.Opamp;
@@ -32,14 +33,21 @@ public class AgentToServerMapper {
         if (description == null) {
             return null;
         }
-        Map<String, Anyvalue.AnyValue> identifyingAttributes = new HashMap<>();
+        Map<String, String> identifyingAttributes = new HashMap<>();
         for (Anyvalue.KeyValue kv : description.getIdentifyingAttributesList()) {
-            identifyingAttributes.put(kv.getKey(), kv.getValue());
+            try {
+                identifyingAttributes.put(kv.getKey(), JsonFormat.printer().print(kv.getValue()));
+            } catch (InvalidProtocolBufferException ignore) {
+
+            }
         }
 
-        Map<String, Anyvalue.AnyValue> nonIdentifyingAttributes = new HashMap<>();
+        Map<String, String> nonIdentifyingAttributes = new HashMap<>();
         for (Anyvalue.KeyValue kv : description.getNonIdentifyingAttributesList()) {
-            nonIdentifyingAttributes.put(kv.getKey(), kv.getValue());
+            try {
+                nonIdentifyingAttributes.put(kv.getKey(), JsonFormat.printer().print(kv.getValue()));
+            } catch (InvalidProtocolBufferException ignore) {
+            }
         }
         return new AgentDescriptionDomain(identifyingAttributes, nonIdentifyingAttributes);
     }

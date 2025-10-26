@@ -1,11 +1,11 @@
 package io.opentelemetry.opamp.gateway.domain.agent;
 
-import opamp.proto.Anyvalue;
-import opamp.proto.Opamp;
-
-import java.util.HashMap;
 import java.util.Map;
 
-public record AgentDescriptionDomain(Map<String, Anyvalue.AnyValue> identifyingAttributes,
-                                     Map<String, Anyvalue.AnyValue> nonIdentifyingAttributes) {
+public record AgentDescriptionDomain(Map<String, String> identifyingAttributes,
+                                     Map<String, String> nonIdentifyingAttributes) {
+    public void merge(AgentDescriptionDomain description) {
+        identifyingAttributes.putAll(description.identifyingAttributes);
+        nonIdentifyingAttributes.putAll(description.nonIdentifyingAttributes);
+    }
 }

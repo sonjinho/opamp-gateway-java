@@ -11,7 +11,7 @@ public record AgentToServerDomain(
         AgentComponentHealthDomain componentHealth,
         EffectiveConfigDomain effectiveConfig,
         RemoteConfigStatusDomain remoteConfigStatus,
-        PackageStatusesDomain packagesStatus,
+        PackageStatusesDomain packagesStatuses,
         AgentDisconnectDomain agentDisconnect,
         Long flags,
         LocalDateTime createdAt,
@@ -41,7 +41,7 @@ public record AgentToServerDomain(
                 packagesStatus,
                 agentDisconnect,
                 flags,
-                null,
+                LocalDateTime.now(),
                 null
         );
     }
@@ -60,7 +60,7 @@ public record AgentToServerDomain(
     }
 
     public boolean hasPackagesStatus() {
-        return packagesStatus != null;
+        return packagesStatuses != null;
     }
 }
 

@@ -1,12 +1,18 @@
-package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.entity;
+package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.jpa.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Getter
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "agent_health")
 public class AgentHealthEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

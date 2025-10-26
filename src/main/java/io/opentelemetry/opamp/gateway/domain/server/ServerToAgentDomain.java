@@ -1,7 +1,10 @@
 package io.opentelemetry.opamp.gateway.domain.server;
 
+import lombok.Builder;
+
 import java.util.UUID;
 
+@Builder
 public record ServerToAgentDomain(
         UUID instanceId,
         ServerErrorResponseDomain serverErrorResponse,

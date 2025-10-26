@@ -1,4 +1,4 @@
-package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.entity;
+package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.jpa.entity;
 
 import io.opentelemetry.opamp.gateway.domain.agent.AgentComponentHealthDomain;
 import jakarta.persistence.*;
@@ -29,9 +29,9 @@ public class AgentComponentHealthEntity {
     private String lastError;
     private String status;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_id", nullable = true)
     private AgentComponentHealthEntity parent;
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AgentComponentHealthEntity> children;
 
     public AgentComponentHealthDomain toDomain() {
@@ -44,5 +44,28 @@ public class AgentComponentHealthEntity {
                 this.children.stream()
                         .collect(Collectors.toMap(AgentComponentHealthEntity::getName, AgentComponentHealthEntity::toDomain))
         );
+    }
+
+    public void merge(AgentComponentHealthEntity target) {
+        if (target.healthy != null) {
+            this.healthy = target.healthy;
+        }
+        if (target.startTimeUnixNano != null) {
+            this.startTimeUnixNano = target.startTimeUnixNano;
+        }
+        if (target.lastError != null) {
+            this.lastError = target.lastError;
+        }
+        if (target.status != null) {
+            this.status = target.status;
+        }
+
+        if (target.children != null) {
+            if (this.children == null) {
+                this.children = target.children;
+            } else {
+                this.children.addAll(target.children);
+            }
+        }
     }
 }

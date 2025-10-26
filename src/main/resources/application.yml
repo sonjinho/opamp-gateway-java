@@ -1,3 +1,6 @@
+logging:
+  level:
+    root: INFO
 server:
   port: 4320
   servlet:
@@ -28,3 +31,10 @@ spring:
     init:
       mode: never
       encoding: UTF-8
+request.persistence:
+  type: ${REQUEST_PERSISTENCE:DB}
+  expired: 1d
+
+storage:
+  file:
+    base-path: ./data/opamp

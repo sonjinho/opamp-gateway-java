@@ -1,4 +1,4 @@
-package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.entity;
+package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.jpa.entity;
 
 import io.opentelemetry.opamp.gateway.domain.agent.PackageStatusDomain;
 import jakarta.persistence.*;
