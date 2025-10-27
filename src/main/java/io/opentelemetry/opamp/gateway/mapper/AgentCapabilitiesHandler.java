@@ -1,4 +1,4 @@
-package io.opentelemetry.opamp.gateway.domain.agent;
+package io.opentelemetry.opamp.gateway.mapper;
 
 import java.util.ArrayList;
 import java.util.List;

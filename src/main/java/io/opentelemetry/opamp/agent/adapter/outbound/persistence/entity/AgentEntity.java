@@ -129,4 +129,19 @@ public class AgentEntity {
             this.disconnectedAt = target.disconnectedAt;
         }
     }
+
+    public AgentDomain toDomain() {
+        return new AgentDomain(
+                this.instanceUId,
+                this.capabilities,
+                this.description,
+                this.componentHealth,
+                this.effectiveConfig,
+                this.remoteConfigStatus,
+                this.packageStatuses,
+                this.createdAt,
+                this.updatedAt,
+                this.disconnectedAt
+        );
+    }
 }

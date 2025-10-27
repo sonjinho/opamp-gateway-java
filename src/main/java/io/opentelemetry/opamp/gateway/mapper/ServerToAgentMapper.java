@@ -12,7 +12,9 @@ public class ServerToAgentMapper {
     public Opamp.ServerToAgent mapperToProto(ServerToAgentDomain serverToAgentDomain) {
         return Opamp.ServerToAgent.newBuilder()
                 .setInstanceUid(ByteString.copyFrom(UUIDUtil.INSTANCE.convertUUIDToBytes(serverToAgentDomain.instanceId())))
-                .setCapabilities(serverToAgentDomain.capabilities())
+                .setCapabilities(
+                        AgentCapabilitiesHandler.addCapability(AgentCapabilitiesHandler.REPORTS_HEALTH, AgentCapabilitiesHandler.REPORTS_HEARTBEAT)
+                )
                 .build();
     }
 }

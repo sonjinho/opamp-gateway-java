@@ -1,6 +1,7 @@
 package io.opentelemetry.opamp.gateway.application.service;
 
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
+import io.opentelemetry.opamp.gateway.application.port.LoadAgentToServerPort;
 import io.opentelemetry.opamp.gateway.application.port.UpdateAgentToServerPort;
 import io.opentelemetry.opamp.gateway.application.usecase.OpampUseCase;
 import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
@@ -15,15 +16,17 @@ import org.springframework.stereotype.Service;
 public class OpampService implements OpampUseCase {
 
     private final AgentUseCase agentUseCase;
+    private final LoadAgentToServerPort loadAgentToServerPort;
     private final UpdateAgentToServerPort updateAgentToServerPort;
 
     @Override
     public ServerToAgentDomain processRequest(AgentToServerDomain request) {
-        boolean result = updateAgentToServerPort.saveAgentToServer(request);
-        if (!result) {
-            log.error("Failed To save {}", request.instanceId());
+        var recent = loadAgentToServerPort.loadAgentToServer(request.instanceId());
+        updateAgentToServerPort.saveAgentToServer(request);
+        if (recent == null || !recent.equals(request)) {
+            // update to recent agent status
+            agentUseCase.saveAgent(request);
         }
-        agentUseCase.saveAgent(request);
         return ServerToAgentDomain.builder()
                 .instanceId(request.instanceId())
                 .capabilities(request.capabilities())
