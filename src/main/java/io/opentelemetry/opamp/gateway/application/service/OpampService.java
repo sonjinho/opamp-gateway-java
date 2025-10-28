@@ -23,13 +23,15 @@ public class OpampService implements OpampUseCase {
     public ServerToAgentDomain processRequest(AgentToServerDomain request) {
         var recent = loadAgentToServerPort.loadAgentToServer(request.instanceId());
         updateAgentToServerPort.saveAgentToServer(request);
+        Long flag = 0L;
         if (recent == null || !recent.equals(request)) {
-            // update to recent agent status
             agentUseCase.saveAgent(request);
+
         }
         return ServerToAgentDomain.builder()
                 .instanceId(request.instanceId())
                 .capabilities(request.capabilities())
+                .flags(flag)
                 .build();
     }
 }

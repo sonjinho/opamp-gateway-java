@@ -6,6 +6,10 @@ import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
 import opamp.proto.Opamp;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+import static io.opentelemetry.opamp.gateway.mapper.AgentCapabilitiesHandler.*;
+
 @Component
 public class ServerToAgentMapper {
 
@@ -13,8 +17,9 @@ public class ServerToAgentMapper {
         return Opamp.ServerToAgent.newBuilder()
                 .setInstanceUid(ByteString.copyFrom(UUIDUtil.INSTANCE.convertUUIDToBytes(serverToAgentDomain.instanceId())))
                 .setCapabilities(
-                        AgentCapabilitiesHandler.addCapability(AgentCapabilitiesHandler.REPORTS_HEALTH, AgentCapabilitiesHandler.REPORTS_HEARTBEAT)
+                        AgentCapabilitiesHandler.addCapability(List.of(REPORTS_STATUS, ACCEPTS_REMOTE_CONFIG, REPORTS_EFFECTIVE_CONFIG, REPORTS_HEALTH, REPORTS_REMOTE_CONFIG, REPORTS_HEARTBEAT))
                 )
+                .setFlags(serverToAgentDomain.flags())
                 .build();
     }
 }

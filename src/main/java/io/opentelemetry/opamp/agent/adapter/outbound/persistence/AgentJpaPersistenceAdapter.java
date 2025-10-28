@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @ToString
@@ -22,6 +23,11 @@ import java.util.UUID;
 public class AgentJpaPersistenceAdapter implements LoadAgentPort, UpdateAgentPort {
 
     private final AgentEntityRepository repo;
+
+    @Override
+    public List<AgentDomain> loadActiveAgents() {
+        return repo.findAll().stream().map(AgentEntity::toDomain).toList();
+    }
 
     @Override
     public boolean saveAgent(AgentDomain agent) {

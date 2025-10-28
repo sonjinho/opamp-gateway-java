@@ -31,6 +31,14 @@ public class AgentCapabilitiesHandler {
         return capabilities | capability;
     }
 
+    public static long addCapability(List<Long> capability) {
+        long result = UNSPECIFIED_AGENT_CAPABILITY;
+        for (Long cap : capability) {
+            result |= cap;
+        }
+        return result;
+    }
+
     // capability 제거
     public static long removeCapability(long capabilities, long capability) {
         return capabilities & ~capability;

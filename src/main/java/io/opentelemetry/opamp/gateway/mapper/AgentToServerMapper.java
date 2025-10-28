@@ -35,25 +35,19 @@ public class AgentToServerMapper {
         }
         Map<String, String> identifyingAttributes = new HashMap<>();
         for (Anyvalue.KeyValue kv : description.getIdentifyingAttributesList()) {
-            try {
-                identifyingAttributes.put(kv.getKey(), JsonFormat.printer().print(kv.getValue()));
-            } catch (InvalidProtocolBufferException ignore) {
-
-            }
+            identifyingAttributes.put(kv.getKey(), convert(kv.getValue()));
         }
 
         Map<String, String> nonIdentifyingAttributes = new HashMap<>();
         for (Anyvalue.KeyValue kv : description.getNonIdentifyingAttributesList()) {
-            try {
-                nonIdentifyingAttributes.put(kv.getKey(), JsonFormat.printer().print(kv.getValue()));
-            } catch (InvalidProtocolBufferException ignore) {
-            }
+            nonIdentifyingAttributes.put(kv.getKey(), convert(kv.getValue()));
         }
         return new AgentDescriptionDomain(identifyingAttributes, nonIdentifyingAttributes);
     }
 
     public AgentComponentHealthDomain mapperToAgentComponentHealthDomain(Opamp.ComponentHealth componentHealth) {
         Map<String, AgentComponentHealthDomain> componentHealthMap = new HashMap<>();
+        if (componentHealth.getComponentHealthMapMap().isEmpty()) return null;
         for (Map.Entry<String, Opamp.ComponentHealth> entry : componentHealth.getComponentHealthMapMap().entrySet()) {
             componentHealthMap.put(entry.getKey(), this.mapperToAgentComponentHealthDomain(entry.getValue()));
         }
@@ -120,5 +114,28 @@ public class AgentToServerMapper {
     private AgentDisconnectDomain mapperToAgentDisconnectDomain(Opamp.AgentDisconnect agentDisconnect) {
         if (agentDisconnect == null) return null;
         return new AgentDisconnectDomain();
+    }
+
+    private String convert(Anyvalue.AnyValue value) {
+        // convert to string
+        if (value.hasStringValue()) return value.getStringValue();
+        if (value.hasIntValue()) return String.valueOf(value.getIntValue());
+        if (value.hasBoolValue()) return String.valueOf(value.getBoolValue());
+        if (value.hasDoubleValue()) return String.valueOf(value.getDoubleValue());
+        if (value.hasArrayValue()) {
+            try {
+                return JsonFormat.printer().print(value);
+            } catch (InvalidProtocolBufferException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (value.hasKvlistValue()) {
+            try {
+                return JsonFormat.printer().print(value);
+            } catch (InvalidProtocolBufferException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 }

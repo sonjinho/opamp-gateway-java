@@ -56,6 +56,33 @@ You can run the application in two ways:
 
 The server will start on the port configured in `src/main/resources/application.yml` (default is 8080).
 
+## System Architecture
+
+```aiexclude
+           ┌────────────────────────────┐
+           │        opamp-ui (Web UI)   │
+           │ https://github.com/sonjinho/opamp-ui │
+           └───────────────┬────────────┘
+                           │ HTTP / WebSocket
+                           ▼
+             ┌────────────────────────────┐
+             │   OpAMP Gateway (Server)   │
+             │  - Spring Boot App          │
+             │  - WebSocket OpAMP Server   │
+             │  - REST API for UI          │
+             └───────────────┬────────────┘
+                             │
+             ┌───────────────┴──────────────┐
+             │                              │
+┌────────────────────┐          ┌────────────────────┐
+│   Agent Instance 1 │          │   Agent Instance N │
+│ (OpAMP Client SDK) │  ...     │ (OpAMP Client SDK) │
+└────────────────────┘          └────────────────────┘
+
+            ▼
+       Database (MySQL / File)
+```
+
 ## 📁 Project Structure
 
 ```
@@ -76,15 +103,19 @@ The server will start on the port configured in `src/main/resources/application.
 └── README.md       # This file
 ```
 
-## 🤝 Contributing
+### Env
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue.
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=opamp
+DB_USER=opamp
+DB_PASSWORD=opamp
+#DB or File
+REQUEST_PERSISTENCE=FILE
 
-1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a pull request.
+```
+
 
 ## 📄 License
 

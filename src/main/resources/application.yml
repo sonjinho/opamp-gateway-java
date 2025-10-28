@@ -13,7 +13,10 @@ server:
         max-age: 1800
 spring:
   application.name: opamp
-  devtools.add-properties: true
+  devtools:
+    add-properties: true
+    livereload.enabled: true
+    restart.enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:workflow}
@@ -31,6 +34,15 @@ spring:
     init:
       mode: never
       encoding: UTF-8
+  # redis
+  data:
+    redis:
+      repositories.enabled: false
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 5000ms
+
 request.persistence:
   type: ${REQUEST_PERSISTENCE:DB}
   expired: 1d

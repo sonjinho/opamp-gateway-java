@@ -3,7 +3,9 @@ package io.opentelemetry.opamp.config;
 import io.opentelemetry.opamp.gateway.adapter.inbound.web.OpampWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 @Configuration
 @EnableWebSocket // STOMP가 아닌 일반 WebSocket 기능을 활성화합니다.
@@ -15,7 +17,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         // OpampWebSocketHandler를 '/opamp-websocket' URL에 등록합니다.
-        registry.addHandler(opampWebSocketHandler, "/v1/opamp-ws")
+        registry.addHandler(opampWebSocketHandler, "/api/v1/opamp-ws")
                 .setAllowedOrigins("*");
     }
 }
