@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static io.opentelemetry.opamp.config.redis.RedisConfig.AGENT_DOMAIN_CACHE;
+
 @Service
 @RequiredArgsConstructor
 public class AgentService implements AgentUseCase {
@@ -28,7 +30,7 @@ public class AgentService implements AgentUseCase {
         return loadAgentPort.loadActiveAgents();
     }
 
-    @Cacheable(value = "agents", key = "#uuid.toString()")
+    @Cacheable(value = AGENT_DOMAIN_CACHE, key = "#uuid.toString()")
     @Override
     public AgentDomain loadAgent(UUID uuid) {
         return loadAgentPort.loadAgent(uuid);
@@ -53,7 +55,7 @@ public class AgentService implements AgentUseCase {
         return 0L;
     }
 
-    @CacheEvict(value = "agents", key = "#agentToServer.instanceId().toString()")
+    @CacheEvict(value = AGENT_DOMAIN_CACHE, key = "#agentToServer.instanceId().toString()")
     @Override
     public void saveAgent(AgentToServerDomain agentToServer) {
         var agent = new AgentDomain(

@@ -1,40 +1,61 @@
 package io.opentelemetry.opamp.config.redis;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
+import io.opentelemetry.opamp.agent.domain.AgentDomain;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.CacheKeyPrefix;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
 
+    public static final String AGENT_DOMAIN_CACHE = "agent_domain";
+
+    @Value("${app.cache.version}")
+    private String cacheVersion;
+    @Value("${app.cache.default-ttl-minutes}")
+    private long defaultTtlMinutes;
+
     @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory, ObjectMapper mapper) {
-        RecordSupportingTypeResolver typeResolver = new RecordSupportingTypeResolver(ObjectMapper.DefaultTyping.NON_FINAL, mapper.getPolymorphicTypeValidator());
-        StdTypeResolverBuilder initializedResolver = typeResolver.init(JsonTypeInfo.Id.CLASS, null);
-        initializedResolver = initializedResolver.inclusion(JsonTypeInfo.As.PROPERTY);
-        mapper.setDefaultTyping(initializedResolver);
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory factory, ObjectMapper mapper) {
 
-        var configuration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(60))
+        GenericJackson2JsonRedisSerializer genericSerializer = new GenericJackson2JsonRedisSerializer(mapper);
+
+        CacheKeyPrefix versionedPrefix = name -> name + ":" + cacheVersion + ":";
+
+        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(defaultTtlMinutes))
                 .disableCachingNullValues()
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair
-                                .fromSerializer(serializer));
+                .computePrefixWith(versionedPrefix)
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(genericSerializer));
 
-        return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(configuration)
+        Jackson2JsonRedisSerializer<AgentDomain> serializer = new Jackson2JsonRedisSerializer<>(mapper, AgentDomain.class);
+
+        RedisCacheConfiguration agentDomainConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(defaultTtlMinutes))
+                .disableCachingNullValues()
+                .computePrefixWith(versionedPrefix)
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
+
+        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+        cacheConfigurations.put(AGENT_DOMAIN_CACHE, agentDomainConfig);
+
+        return RedisCacheManager.builder(factory)
+                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
     }
 }

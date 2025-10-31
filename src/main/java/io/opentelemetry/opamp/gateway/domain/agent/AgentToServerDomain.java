@@ -36,13 +36,13 @@ public record AgentToServerDomain(UUID instanceId, Long seqNum, AgentDescription
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         AgentToServerDomain that = (AgentToServerDomain) o;
-        return Objects.equals(flags, that.flags) && Objects.equals(instanceId, that.instanceId) && Objects.equals(capabilities, that.capabilities) && Objects.equals(createdAt, that.createdAt) && Objects.equals(disconnectedAt, that.disconnectedAt) && Objects.equals(description, that.description) && Objects.equals(effectiveConfig, that.effectiveConfig) && Objects.equals(agentDisconnect, that.agentDisconnect) && Objects.equals(packagesStatuses, that.packagesStatuses) && Objects.equals(componentHealth, that.componentHealth) && Objects.equals(remoteConfigStatus, that.remoteConfigStatus);
+        return Objects.equals(flags, that.flags) && Objects.equals(instanceId, that.instanceId) && Objects.equals(capabilities, that.capabilities) && Objects.equals(createdAt, that.createdAt) && Objects.equals(description, that.description) && Objects.equals(effectiveConfig, that.effectiveConfig) && Objects.equals(agentDisconnect, that.agentDisconnect) && Objects.equals(packagesStatuses, that.packagesStatuses) && Objects.equals(componentHealth, that.componentHealth) && Objects.equals(remoteConfigStatus, that.remoteConfigStatus);
     }
 
     // skip the sequence
     @Override
     public int hashCode() {
-        return Objects.hash(instanceId, description, capabilities, componentHealth, effectiveConfig, remoteConfigStatus, packagesStatuses, agentDisconnect, flags, createdAt, disconnectedAt);
+        return Objects.hash(instanceId, description, capabilities, componentHealth, effectiveConfig, remoteConfigStatus, packagesStatuses, agentDisconnect, flags);
     }
 }
 

@@ -49,3 +49,8 @@ request.persistence:
 storage:
   file:
     base-path: ./data/opamp
+
+app:
+  cache:
+    version: 2
+    default-ttl-minutes: 60

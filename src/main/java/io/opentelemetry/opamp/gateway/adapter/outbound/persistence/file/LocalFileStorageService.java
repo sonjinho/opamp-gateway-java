@@ -248,7 +248,6 @@ public class LocalFileStorageService implements FileStorageService {
                     Path indexFile = basePath.resolve(dateKey.toString()).resolve("index.json");
                     try {
                         Files.writeString(indexFile, objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(dayIndex));
-                        log.info("Index saved to disk successfully for date: {}", dateKey);
                     } catch (IOException e) {
                         log.error("Critical: Failed to save in-memory index to disk for date: {}", dateKey, e);
                     }

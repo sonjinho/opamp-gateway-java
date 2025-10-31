@@ -24,7 +24,7 @@ public class OpampController {
     @PostMapping(value = "/api/v1/opamp", produces = MediaType.APPLICATION_PROTOBUF_VALUE, consumes = MediaType.APPLICATION_PROTOBUF_VALUE)
     public Opamp.ServerToAgent opamp(@RequestBody() Opamp.AgentToServer requestBody) {
         var agentToServer = agentToServerMapper.mapperToDomain(requestBody);
-        log.info("Agent To Server Request {}:", agentToServer);
+        log.debug("Agent To Server Request {}:", agentToServer);
         var serverToAgent = service.processRequest(agentToServer);
         return serverToAgentMapper.mapperToProto(serverToAgent);
     }
