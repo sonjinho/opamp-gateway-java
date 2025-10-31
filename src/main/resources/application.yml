@@ -14,9 +14,8 @@ server:
 spring:
   application.name: opamp
   devtools:
-    add-properties: true
     livereload.enabled: true
-    restart.enabled: true
+    restart.enabled: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:workflow}

@@ -26,6 +26,7 @@ public class OpampService implements OpampUseCase {
         Long flag = 0L;
         if (recent == null || !recent.equals(request)) {
             agentUseCase.saveAgent(request);
+            agentUseCase.loadAgent(request.instanceId());
 
         }
         return ServerToAgentDomain.builder()

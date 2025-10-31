@@ -1,4 +1,4 @@
-package io.opentelemetry.opamp.config;
+package io.opentelemetry.opamp.config.web;
 
 import io.opentelemetry.opamp.gateway.adapter.inbound.web.OpampWebSocketHandler;
 import lombok.RequiredArgsConstructor;

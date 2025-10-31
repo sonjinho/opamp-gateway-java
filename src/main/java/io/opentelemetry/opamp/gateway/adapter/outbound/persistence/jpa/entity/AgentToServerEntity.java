@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "agent_to_server", indexes = {
-        @Index(name = "idx_instance_uid", columnList = "instance_uid")
+        @Index(name = "idx_agent_instance_uid", columnList = "instance_uid")
 })
 public class AgentToServerEntity {
     @Id

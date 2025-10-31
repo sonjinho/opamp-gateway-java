@@ -1,4 +1,4 @@
-package io.opentelemetry.opamp.config;
+package io.opentelemetry.opamp.config.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

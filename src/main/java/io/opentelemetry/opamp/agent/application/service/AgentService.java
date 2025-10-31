@@ -1,6 +1,7 @@
 package io.opentelemetry.opamp.agent.application.service;
 
 import io.opentelemetry.opamp.agent.application.command.SearchAgentsCommand;
+import io.opentelemetry.opamp.agent.application.command.UpdateAgentConfigCommand;
 import io.opentelemetry.opamp.agent.application.port.LoadAgentPort;
 import io.opentelemetry.opamp.agent.application.port.UpdateAgentPort;
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
@@ -8,6 +9,7 @@ import io.opentelemetry.opamp.agent.domain.AgentDomain;
 import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +53,7 @@ public class AgentService implements AgentUseCase {
         return 0L;
     }
 
+    @CacheEvict(value = "agents", key = "#agentToServer.instanceId().toString()")
     @Override
     public void saveAgent(AgentToServerDomain agentToServer) {
         var agent = new AgentDomain(
@@ -69,7 +72,14 @@ public class AgentService implements AgentUseCase {
     }
 
     @Override
+    public void updateRemoteConfig(UpdateAgentConfigCommand command) {
+
+    }
+
+    @Override
     public void updateAgent(ServerToAgentDomain serverToAgentDomain) {
 
     }
+
+
 }

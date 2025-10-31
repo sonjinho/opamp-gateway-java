@@ -2,14 +2,13 @@ package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.file;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
@@ -24,6 +23,7 @@ import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 @Slf4j
+@ConditionalOnProperty(name = "request.persistence.type", havingValue = "FILE")
 @Component
 public class LocalFileStorageService implements FileStorageService {
     private static final int BATCH_SIZE = 500;
@@ -47,8 +47,6 @@ public class LocalFileStorageService implements FileStorageService {
     public LocalFileStorageService(FileStorageProperties props, ObjectMapper mapper) {
         this.basePath = props.getBasePath();
         this.objectMapper = mapper;
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @PostConstruct

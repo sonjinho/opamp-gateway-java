@@ -1,6 +1,7 @@
 package io.opentelemetry.opamp.agent.application.usecase;
 
 import io.opentelemetry.opamp.agent.application.command.SearchAgentsCommand;
+import io.opentelemetry.opamp.agent.application.command.UpdateAgentConfigCommand;
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
 import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
@@ -13,9 +14,15 @@ public interface AgentUseCase {
 
     void saveAgent(AgentToServerDomain agentToServer);
 
+    default void updateRemoteConfig(UpdateAgentConfigCommand command) {
+    }
+
+    ;
+
     void updateAgent(ServerToAgentDomain serverToAgentDomain);
 
     Long requestFlag(UUID uuid);
 
     List<AgentDomain> loadAllAgents(SearchAgentsCommand command);
+
 }
