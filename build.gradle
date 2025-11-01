@@ -82,11 +82,21 @@ protobuf {
 	protoc {
 		artifact = 'com.google.protobuf:protoc:4.28.2' // 최신 버전으로 업데이트
 	}
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.59.1'
+        }
+    }
 	generateProtoTasks {
 		all().forEach { task ->
 			task.builtins {
-				java {}
-			}
+                java {
+                    option 'lite'
+                }
+            }
+            task.plugins {
+                grpc { option 'lite' }
+            }
 		}
 	}
 }
