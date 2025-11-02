@@ -1,0 +1,9 @@
+package io.opentelemetry.opamp.gateway.adapter.outbound.persistence.r2dbc.repository;
+
+import io.opentelemetry.opamp.gateway.adapter.outbound.persistence.r2dbc.entity.AgentPackageStatusEntity;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AgentPackageStatusEntityRepository extends ReactiveCrudRepository<AgentPackageStatusEntity, Long> {
+}
