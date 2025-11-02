@@ -3,18 +3,24 @@ plugins {
     id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.protobuf' version '0.9.5'
-
 }
 ext {
-    grpc = '1.76.0'
+    springBootVersion = '3.5.6'
+    springDependencyManagementVersion = '1.1.7'
+    protobufPluginVersion = '0.9.5'
+    grpcSpringBootStarterVersion = '3.1.0.RELEASE'
+    grpcVersion = '1.76.0'
+    commonsIoVersion = '2.20.0'
+    jacksonUuidVersion = '5.1.1'
+    protocVersion = '4.33.0'
 }
 group = 'io.opentelemetry'
 version = '0.0.1-SNAPSHOT'
-description = 'OpenTelemetry Openamp gateway'
+description = 'OpenTelemetry Opamp gateway'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -35,20 +41,20 @@ dependencies {
 
 
     // spring boot starter grpc
-    implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
-    implementation 'io.grpc:grpc-netty-shaded:1.76.0'
-    implementation 'io.grpc:grpc-protobuf:1.76.0'
-    implementation 'io.grpc:grpc-stub:1.76.0'
+    implementation 'net.devh:grpc-spring-boot-starter:' + grpcSpringBootStarterVersion
+    implementation 'io.grpc:grpc-netty-shaded:' + grpcVersion
+    implementation 'io.grpc:grpc-protobuf:' + grpcVersion
+    implementation 'io.grpc:grpc-stub:' + grpcVersion
 
 
     // apache-common-io
-    implementation 'commons-io:commons-io:2.20.0'
+    implementation 'commons-io:commons-io:' + commonsIoVersion
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util
 //    implementation 'com.google.protobuf:protobuf-java-util:4.33.0'
 
     // jackson
-    implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.1'
+    implementation 'com.fasterxml.uuid:java-uuid-generator:' + jacksonUuidVersion
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -58,7 +64,7 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
 
     // Protobuf
-    implementation 'com.google.protobuf:protobuf-java:4.33.0' // 최신 버전으로 업데이트
+    implementation 'com.google.protobuf:protobuf-java:' + protocVersion // 최신 버전으로 업데이트
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -89,11 +95,11 @@ sourceSets {
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:4.28.2' // 최신 버전으로 업데이트
+        artifact = 'com.google.protobuf:protoc:' + protocVersion // 최신 버전으로 업데이트
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.76.0'
+            artifact = 'io.grpc:protoc-gen-grpc-java:' + grpcVersion
         }
     }
     generateProtoTasks {
@@ -103,7 +109,8 @@ protobuf {
                 }
             }
             task.plugins {
-                grpc {}
+                grpc {
+                }
             }
         }
     }
