@@ -1,26 +1,29 @@
 plugins {
-	id 'java'
+    id 'java'
     id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.7'
-	id 'com.google.protobuf' version '0.9.5'
-}
+    id 'com.google.protobuf' version '0.9.5'
 
+}
+ext {
+    grpc = '1.76.0'
+}
 group = 'io.opentelemetry'
 version = '0.0.1-SNAPSHOT'
 description = 'OpenTelemetry Openamp gateway'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	// Spring Boot Starters
+    // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 //    implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
@@ -30,11 +33,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+
+    // spring boot starter grpc
+    implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
+    implementation 'io.grpc:grpc-netty-shaded:1.76.0'
+    implementation 'io.grpc:grpc-protobuf:1.76.0'
+    implementation 'io.grpc:grpc-stub:1.76.0'
+
+
     // apache-common-io
     implementation 'commons-io:commons-io:2.20.0'
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util
-    implementation 'com.google.protobuf:protobuf-java-util:4.33.0'
+//    implementation 'com.google.protobuf:protobuf-java-util:4.33.0'
 
     // jackson
     implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.1'
@@ -47,7 +58,7 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
 
     // Protobuf
-    implementation 'com.google.protobuf:protobuf-java:4.28.2' // 최신 버전으로 업데이트
+    implementation 'com.google.protobuf:protobuf-java:4.33.0' // 최신 버전으로 업데이트
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -61,44 +72,41 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 sourceSets {
-	main {
-		java {
-			srcDirs += "$buildDir/generated/source/proto/main/java"
-		}
-		proto {
-			srcDirs += 'src/main/proto'
-		}
-	}
+    main {
+
+        proto {
+            srcDirs += 'src/main/proto'
+        }
+
+    }
 }
 
 protobuf {
-	protoc {
-		artifact = 'com.google.protobuf:protoc:4.28.2' // 최신 버전으로 업데이트
-	}
+    protoc {
+        artifact = 'com.google.protobuf:protoc:4.28.2' // 최신 버전으로 업데이트
+    }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.59.1'
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.76.0'
         }
     }
-	generateProtoTasks {
-		all().forEach { task ->
-			task.builtins {
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
                 java {
-                    option 'lite'
                 }
             }
             task.plugins {
-                grpc { option 'lite' }
+                grpc {}
             }
-		}
-	}
+        }
+    }
 }
 
 // generatedProto before build

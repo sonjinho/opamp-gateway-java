@@ -1,0 +1,2 @@
+[versions]
+grpc = "1.76.0"

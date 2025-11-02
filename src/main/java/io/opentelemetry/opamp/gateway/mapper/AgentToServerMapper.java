@@ -1,7 +1,5 @@
 package io.opentelemetry.opamp.gateway.mapper;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
 import io.opentelemetry.opamp.gateway.domain.agent.*;
 import opamp.proto.Anyvalue;
 import opamp.proto.Opamp;
@@ -10,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class AgentToServerMapper {
@@ -123,18 +122,10 @@ public class AgentToServerMapper {
         if (value.hasBoolValue()) return String.valueOf(value.getBoolValue());
         if (value.hasDoubleValue()) return String.valueOf(value.getDoubleValue());
         if (value.hasArrayValue()) {
-            try {
-                return JsonFormat.printer().print(value);
-            } catch (InvalidProtocolBufferException e) {
-                throw new RuntimeException(e);
-            }
+            return value.getArrayValue().getValuesList().stream().map(this::convert).collect(Collectors.joining(","));
         }
         if (value.hasKvlistValue()) {
-            try {
-                return JsonFormat.printer().print(value);
-            } catch (InvalidProtocolBufferException e) {
-                throw new RuntimeException(e);
-            }
+            return value.getKvlistValue().getValuesList().stream().map(kv -> kv.getKey() + "=" + convert(kv.getValue())).collect(Collectors.joining(",", "{", "}"));
         }
         return null;
     }

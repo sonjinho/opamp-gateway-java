@@ -1,6 +1,9 @@
 logging:
   level:
     root: INFO
+grpc:
+  server:
+    port: 4321
 server:
   port: 4320
   servlet:
