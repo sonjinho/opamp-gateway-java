@@ -9,6 +9,7 @@ import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
@@ -20,19 +21,26 @@ public class OpampService implements OpampUseCase {
     private final UpdateAgentToServerPort updateAgentToServerPort;
 
     @Override
-    public ServerToAgentDomain processRequest(AgentToServerDomain request) {
-        var recent = loadAgentToServerPort.loadAgentToServer(request.instanceId());
-        updateAgentToServerPort.saveAgentToServer(request);
-        Long flag = 0L;
-        if (recent == null || !recent.equals(request)) {
-            agentUseCase.saveAgent(request);
-            agentUseCase.loadAgent(request.instanceId());
-
-        }
-        return ServerToAgentDomain.builder()
-                .instanceId(request.instanceId())
-                .capabilities(request.capabilities())
-                .flags(flag)
-                .build();
+    public Mono<ServerToAgentDomain> processRequest(AgentToServerDomain request) {
+        return Mono.zip(
+                loadAgentToServerPort.loadAgentToServer(request.instanceId()),
+                updateAgentToServerPort.saveAgentToServer(request)
+        ).flatMap(tuple -> {
+            AgentToServerDomain recent = tuple.getT1();
+            if (recent == null || !recent.equals(request)) {
+                return agentUseCase.saveAgent(request)
+                        .then(agentUseCase.loadAgent(request.instanceId()))
+                        .map(agent -> ServerToAgentDomain.builder()
+                                .instanceId(request.instanceId())
+                                .capabilities(request.capabilities())
+                                .flags(0L)
+                                .build());
+            }
+            return Mono.just(ServerToAgentDomain.builder()
+                    .instanceId(request.instanceId())
+                    .capabilities(request.capabilities())
+                    .flags(0L)
+                    .build());
+        });
     }
 }

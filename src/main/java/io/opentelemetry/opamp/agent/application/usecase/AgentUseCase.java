@@ -5,24 +5,23 @@ import io.opentelemetry.opamp.agent.application.command.UpdateAgentConfigCommand
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
 import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface AgentUseCase {
-    AgentDomain loadAgent(UUID uuid);
+    Mono<AgentDomain> loadAgent(UUID uuid);
 
-    void saveAgent(AgentToServerDomain agentToServer);
+    Mono<Void> saveAgent(AgentToServerDomain agentToServer);
 
     default void updateRemoteConfig(UpdateAgentConfigCommand command) {
     }
 
-    ;
-
     void updateAgent(ServerToAgentDomain serverToAgentDomain);
 
-    Long requestFlag(UUID uuid);
+    Mono<Long> requestFlag(UUID uuid);
 
-    List<AgentDomain> loadAllAgents(SearchAgentsCommand command);
+    Flux<AgentDomain> loadAllAgents(SearchAgentsCommand command);
 
 }

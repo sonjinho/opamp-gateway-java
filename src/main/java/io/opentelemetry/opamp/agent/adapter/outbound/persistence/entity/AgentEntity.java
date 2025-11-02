@@ -2,15 +2,15 @@ package io.opentelemetry.opamp.agent.adapter.outbound.persistence.entity;
 
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
 import io.opentelemetry.opamp.gateway.domain.agent.*;
-import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.type.SqlTypes;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -18,41 +18,31 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
-@Table(name = "agent", indexes = {
-        @Index(name = "idx_instance_uid", columnList = "instance_uid")
-})
+@Table(name = "agent")
 public class AgentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
-    @Column(name = "instance_uid")
+    @Column(value = "instance_uid")
     private UUID instanceUId;
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "agent_description")
+    @Column(value = "agent_description")
     private AgentDescriptionDomain description;
-    @Column(name = "capabilities")
+    @Column(value = "capabilities")
     private Long capabilities;
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "agent_component_health")
+    @Column(value = "agent_component_health")
     private AgentComponentHealthDomain componentHealth;
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "effective_config")
+    @Column(value = "effective_config")
     private EffectiveConfigDomain effectiveConfig;
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "remote_config_status")
+    @Column(value = "remote_config_status")
     private RemoteConfigStatusDomain remoteConfigStatus;
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "package_statuses")
+    @Column(value = "package_statuses")
     private PackageStatusesDomain packageStatuses;
-    @CreationTimestamp()
-    @Column(name = "created_at", nullable = false)
+    @CreatedDate()
+    @Column(value = "created_at")
     private LocalDateTime createdAt;
-    @UpdateTimestamp()
-    @Column(name = "updated_at", nullable = false)
+    @LastModifiedDate()
+    @Column(value = "updated_at")
     private LocalDateTime updatedAt;
-    @Column(name = "disconnected_at", nullable = true)
+    @Column(value = "disconnected_at")
     private LocalDateTime disconnectedAt;
 
     public static AgentEntity from(AgentDomain agent) {

@@ -1,8 +1,9 @@
 package io.opentelemetry.opamp.agent.application.port;
 
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
+import reactor.core.publisher.Mono;
 
 public interface UpdateAgentPort {
 
-    boolean saveAgent(AgentDomain agent);
+    Mono<Boolean> saveAgent(AgentDomain agent);
 }

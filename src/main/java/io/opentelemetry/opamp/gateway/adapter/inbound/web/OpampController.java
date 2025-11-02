@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
@@ -22,11 +23,11 @@ public class OpampController {
 
     // Post to /v1/opamp body binary protobuf
     @PostMapping(value = "/api/v1/opamp", produces = MediaType.APPLICATION_PROTOBUF_VALUE, consumes = MediaType.APPLICATION_PROTOBUF_VALUE)
-    public Opamp.ServerToAgent opamp(@RequestBody() Opamp.AgentToServer requestBody) {
+    public Mono<Opamp.ServerToAgent> opamp(@RequestBody() Opamp.AgentToServer requestBody) {
         var agentToServer = agentToServerMapper.mapperToDomain(requestBody);
         log.debug("Agent To Server Request {}:", agentToServer);
-        var serverToAgent = service.processRequest(agentToServer);
-        return serverToAgentMapper.mapperToProto(serverToAgent);
+        return service.processRequest(agentToServer)
+                .map(serverToAgentMapper::mapperToProto);
     }
 
 }
