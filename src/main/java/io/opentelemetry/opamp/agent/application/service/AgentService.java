@@ -9,6 +9,7 @@ import io.opentelemetry.opamp.agent.domain.AgentDomain;
 import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static io.opentelemetry.opamp.config.redis.RedisConfig.AGENT_DOMAIN_CACHE;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AgentService implements AgentUseCase {
@@ -30,7 +32,7 @@ public class AgentService implements AgentUseCase {
         return loadAgentPort.loadActiveAgents();
     }
 
-    @Cacheable(value = AGENT_DOMAIN_CACHE, key = "#uuid.toString()")
+    @Cacheable(value = AGENT_DOMAIN_CACHE, key = "#uuid.toString()", sync = true)
     @Override
     public AgentDomain loadAgent(UUID uuid) {
         return loadAgentPort.loadAgent(uuid);

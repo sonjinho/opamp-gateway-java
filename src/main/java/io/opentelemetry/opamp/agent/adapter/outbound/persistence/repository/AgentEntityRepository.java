@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface AgentEntityRepository extends JpaRepository<AgentEntity, Long> {
     Optional<AgentEntity> findByInstanceUId(UUID instanceUId);
+
+
 }

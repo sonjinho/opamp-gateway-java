@@ -31,7 +31,6 @@ repositories {
 dependencies {
     // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-//    implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -46,12 +45,8 @@ dependencies {
     implementation 'io.grpc:grpc-protobuf:' + grpcVersion
     implementation 'io.grpc:grpc-stub:' + grpcVersion
 
-
     // apache-common-io
     implementation 'commons-io:commons-io:' + commonsIoVersion
-
-    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util
-//    implementation 'com.google.protobuf:protobuf-java-util:4.33.0'
 
     // jackson
     implementation 'com.fasterxml.uuid:java-uuid-generator:' + jacksonUuidVersion
