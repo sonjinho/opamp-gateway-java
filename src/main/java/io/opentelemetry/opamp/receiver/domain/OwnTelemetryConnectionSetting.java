@@ -10,7 +10,7 @@ public record OwnTelemetryConnectionSetting(
         String destinationEndpoint,
         HeadersDomain headers,
         TlsCertificateDomain certificate,
-        TlsConnectionSettingsDomain tls,
+        TlsConnectionSettingsDomain connection,
         ProxyConnectionSettingsDomain proxy
 ) {
 }

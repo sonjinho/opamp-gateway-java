@@ -23,8 +23,6 @@ import java.util.Map;
 @Table(name = "telemetry_connection_setting")
 public class TelemetryConnectionSettingEntity {
 
-    @Column(name = "has_tls_certificate")
-    Boolean hasTlsCertificate = false;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -33,6 +31,8 @@ public class TelemetryConnectionSettingEntity {
     private Map<String, String> headers;
     @Column(name = "destination_endpoint")
     private String destinationEndpoint;
+    @Column(name = "has_tls_certificate")
+    Boolean hasTlsCertificate = false;
     @Column(name = "cert")
     private byte[] cert;
     @Column(name = "private_key")
@@ -61,6 +61,30 @@ public class TelemetryConnectionSettingEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "connection_headers")
     private Map<String, String> connectionHeaders;
+
+    public static TelemetryConnectionSettingEntity from(OwnTelemetryConnectionSetting ownTelemetryConnectionSetting) {
+        return new TelemetryConnectionSettingEntity(
+                null,
+                ownTelemetryConnectionSetting.headers() != null ? ownTelemetryConnectionSetting.headers().toMap() : null,
+                ownTelemetryConnectionSetting.destinationEndpoint(),
+                ownTelemetryConnectionSetting.certificate() != null,
+                ownTelemetryConnectionSetting.certificate() != null ? ownTelemetryConnectionSetting.certificate().cert() : null,
+                ownTelemetryConnectionSetting.certificate() != null ? ownTelemetryConnectionSetting.certificate().privateKey() : null,
+                ownTelemetryConnectionSetting.certificate() != null ? ownTelemetryConnectionSetting.certificate().caCert() : null,
+                ownTelemetryConnectionSetting.connection() != null,
+                ownTelemetryConnectionSetting.connection() != null ? ownTelemetryConnectionSetting.connection().caPemContents() : null,
+                ownTelemetryConnectionSetting.connection() != null ? ownTelemetryConnectionSetting.connection().includeSystemCaCertsPool() : null,
+                ownTelemetryConnectionSetting.connection() != null ? ownTelemetryConnectionSetting.connection().insecureSkipVerify() : null,
+                ownTelemetryConnectionSetting.connection() != null ? ownTelemetryConnectionSetting.connection().minVersion() : null,
+                ownTelemetryConnectionSetting.connection() != null ? ownTelemetryConnectionSetting.connection().maxVersion() : null,
+                ownTelemetryConnectionSetting.connection() != null ? ownTelemetryConnectionSetting.connection().cipherSuites() : null,
+                ownTelemetryConnectionSetting.proxy() != null,
+                ownTelemetryConnectionSetting.proxy() != null ? ownTelemetryConnectionSetting.proxy().url() : null,
+                ownTelemetryConnectionSetting.proxy() != null ? ownTelemetryConnectionSetting.proxy().connectHeaders().toMap() : null
+
+        )
+                ;
+    }
 
     public OwnTelemetryConnectionSetting toDomain() {
         var header = HeadersDomain.from(headers);

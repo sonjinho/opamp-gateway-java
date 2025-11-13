@@ -16,7 +16,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "own_telemetry_setting")
+@Table(name = "own_telemetry_setting", indexes = {
+        @Index(name = "idx_type", columnList = "type"),
+        @Index(name = "idx_own_metric", columnList = "own_metric"),
+        @Index(name = "idx_own_trace", columnList = "own_trace"),
+        @Index(name = "idx_own_log", columnList = "own_log")
+}
+)
 public class OwnTelemetrySettingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,6 +48,31 @@ public class OwnTelemetrySettingEntity {
     @ManyToOne()
     @JoinColumn(name = "own_log_setting_id")
     private TelemetryConnectionSettingEntity ownLogSetting;
+
+    public static OwnTelemetrySettingEntity from(OwnTelemetrySetting ownTelemetrySetting) {
+        return new OwnTelemetrySettingEntity(
+                ownTelemetrySetting.id(),
+                ownTelemetrySetting.type(),
+                ownTelemetrySetting.labels(),
+                ownTelemetrySetting.ownMetricEnable(),
+                ownTelemetrySetting.ownTraceEnable(),
+                ownTelemetrySetting.ownLogEnable(),
+                ownTelemetrySetting.ownMetricEnable() ? TelemetryConnectionSettingEntity.from(ownTelemetrySetting.ownMetricSetting()) : null,
+                ownTelemetrySetting.ownTraceEnable() ? TelemetryConnectionSettingEntity.from(ownTelemetrySetting.ownTraceSetting()) : null,
+                ownTelemetrySetting.ownLogEnable() ? TelemetryConnectionSettingEntity.from(ownTelemetrySetting.ownLogSetting()) : null
+        );
+    }
+
+    public OwnTelemetrySetting.OwnTelemetrySettingSummary toDomainItem() {
+        return new OwnTelemetrySetting.OwnTelemetrySettingSummary(
+                id,
+                type,
+                labels,
+                ownMetric,
+                ownTrace,
+                ownLog
+        );
+    }
 
     public OwnTelemetrySetting toDomain() {
         return new OwnTelemetrySetting(
