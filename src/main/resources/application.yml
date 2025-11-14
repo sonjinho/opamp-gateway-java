@@ -57,3 +57,13 @@ app:
   cache:
     version: 2
     default-ttl-minutes: 60
+
+telemetry:
+  log:
+    type: loki
+    loki:
+      endpoint: http://localhost:3001
+  metric:
+    type: prometheus
+    prometheus:
+      endpoint: http://localhost:9090
