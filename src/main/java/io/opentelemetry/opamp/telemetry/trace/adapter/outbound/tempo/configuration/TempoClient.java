@@ -10,6 +10,7 @@ import io.opentelemetry.opamp.telemetry.trace.adapter.outbound.tempo.dto.TempoSe
 import io.opentelemetry.proto.trace.v1.TracesData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(prefix = "telemetry.trace", name = "type", havingValue = "tempo")
 public class TempoClient implements TempoRestClient {
 
     private final RestClient restClient;
