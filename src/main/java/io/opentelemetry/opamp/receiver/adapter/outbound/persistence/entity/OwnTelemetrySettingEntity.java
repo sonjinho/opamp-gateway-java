@@ -17,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "own_telemetry_setting", indexes = {
-        @Index(name = "idx_type", columnList = "type"),
+        @Index(name = "idx_type", columnList = "deploy_type"),
         @Index(name = "idx_own_metric", columnList = "own_metric"),
         @Index(name = "idx_own_trace", columnList = "own_trace"),
         @Index(name = "idx_own_log", columnList = "own_log")
