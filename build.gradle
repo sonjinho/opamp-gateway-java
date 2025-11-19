@@ -40,7 +40,7 @@ dependencies {
 
 
     // spring boot starter grpc
-    implementation 'net.devh:grpc-spring-boot-starter:' + grpcSpringBootStarterVersion
+//    implementation 'net.devh:grpc-spring-boot-starter:' + grpcSpringBootStarterVersion
     implementation 'io.grpc:grpc-netty-shaded:' + grpcVersion
     implementation 'io.grpc:grpc-protobuf:' + grpcVersion
     implementation 'io.grpc:grpc-stub:' + grpcVersion
@@ -58,7 +58,7 @@ dependencies {
     annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
 
 
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
     // H2 Database (runtime)

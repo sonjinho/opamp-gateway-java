@@ -6,8 +6,10 @@ import io.opentelemetry.opamp.agent.application.port.LoadAgentPort;
 import io.opentelemetry.opamp.agent.application.port.UpdateAgentPort;
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
+import io.opentelemetry.opamp.gateway.application.port.AgentPushPort;
 import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,6 +28,7 @@ public class AgentService implements AgentUseCase {
 
     private final LoadAgentPort loadAgentPort;
     private final UpdateAgentPort updateAgentPort;
+    private final AgentPushPort agentPushPort;
 
     @Override
     public List<AgentDomain> loadAllAgents(SearchAgentsCommand command) {
@@ -77,12 +80,21 @@ public class AgentService implements AgentUseCase {
 
     @Override
     public void updateRemoteConfig(UpdateAgentConfigCommand command) {
-
+        AgentDomain agent = loadAgentPort.loadAgent(command.instanceId());
+        if (agent == null) {
+            throw new EntityNotFoundException("Agent not found");
+        }
+        var response = ServerToAgentDomain.builder()
+                .flags(0L)
+                .instanceId(agent.instanceUId())
+                .agentRemoteConfig(command.agentRemoteConfig())
+                .build();
+        agentPushPort.push(agent.instanceUId(), response);
     }
 
     @Override
     public void updateAgent(ServerToAgentDomain serverToAgentDomain) {
-
+        agentPushPort.push(serverToAgentDomain.instanceId(), serverToAgentDomain);
     }
 
 

@@ -1,6 +1,7 @@
 package io.opentelemetry.opamp.gateway.application.service;
 
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
+import io.opentelemetry.opamp.gateway.application.port.AgentPushPort;
 import io.opentelemetry.opamp.gateway.application.port.LoadAgentToServerPort;
 import io.opentelemetry.opamp.gateway.application.port.UpdateAgentToServerPort;
 import io.opentelemetry.opamp.gateway.application.usecase.OpampUseCase;
@@ -10,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -18,6 +21,7 @@ public class OpampService implements OpampUseCase {
     private final AgentUseCase agentUseCase;
     private final LoadAgentToServerPort loadAgentToServerPort;
     private final UpdateAgentToServerPort updateAgentToServerPort;
+    private final AgentPushPort agentPushPort;
 
     @Override
     public ServerToAgentDomain processRequest(AgentToServerDomain request) {
@@ -34,5 +38,10 @@ public class OpampService implements OpampUseCase {
                 .capabilities(request.capabilities())
                 .flags(flag)
                 .build();
+    }
+
+    @Override
+    public void push(UUID agentId, ServerToAgentDomain serverToAgentDomain) {
+        agentPushPort.push(agentId, serverToAgentDomain);
     }
 }

@@ -1,6 +1,6 @@
 package io.opentelemetry.opamp.gateway.domain.server;
 
-import io.opentelemetry.opamp.gateway.domain.server.AgentConfigFileDomain;
+import io.opentelemetry.opamp.gateway.domain.agent.AgentConfigFileDomain;
 
 import java.util.Map;
 

@@ -1,6 +1,8 @@
 package io.opentelemetry.opamp.agent.adapter.inbound.web;
 
+import io.opentelemetry.opamp.agent.adapter.inbound.web.dto.AgentRemoteConfigDTO;
 import io.opentelemetry.opamp.agent.application.command.SearchAgentsCommand;
+import io.opentelemetry.opamp.agent.application.command.UpdateAgentConfigCommand;
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,12 @@ public class AgentController {
 
     @PutMapping("/{instanceId}")
     public AgentDomain updateAgent(@PathVariable("instanceId") UUID instanceId) {
+        return agentUseCase.loadAgent(instanceId);
+    }
+
+    @PutMapping("/{instanceId}/config")
+    public AgentDomain updateRemoteConfig(@PathVariable("instanceId") UUID instanceId, @RequestBody AgentRemoteConfigDTO remoteConfigDTO) {
+        agentUseCase.updateRemoteConfig(new UpdateAgentConfigCommand(instanceId, remoteConfigDTO.toDomain()));
         return agentUseCase.loadAgent(instanceId);
     }
 

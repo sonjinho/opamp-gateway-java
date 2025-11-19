@@ -26,7 +26,7 @@ spring:
     password: ${DB_PASSWORD:changeMe!}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: false
     properties:
       hibernate:
