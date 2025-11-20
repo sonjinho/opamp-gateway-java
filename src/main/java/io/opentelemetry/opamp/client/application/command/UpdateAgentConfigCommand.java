@@ -6,16 +6,11 @@ import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
 import java.util.UUID;
 
 public record UpdateAgentConfigCommand(
-        UUID agentId,
+        UUID targetId,
         AgentRemoteConfigDomain agentRemoteConfig
 ) implements ServerToAgentEventCommand {
     @Override
-    public UUID targetId() {
-        return agentId;
-    }
-
-    @Override
     public ServerToAgentDomain toDomain() {
-        return ServerToAgentDomain.builder().instanceId(agentId).agentRemoteConfig(agentRemoteConfig).build();
+        return ServerToAgentDomain.builder().instanceId(targetId).agentRemoteConfig(agentRemoteConfig).build();
     }
 }

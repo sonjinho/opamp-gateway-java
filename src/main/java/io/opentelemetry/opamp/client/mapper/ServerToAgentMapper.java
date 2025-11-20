@@ -1,10 +1,7 @@
 package io.opentelemetry.opamp.client.mapper;
 
 import com.google.protobuf.ByteString;
-import io.opentelemetry.opamp.client.domain.server.AgentRemoteConfigDomain;
-import io.opentelemetry.opamp.client.domain.server.ConnectionSettingsOffersDomain;
-import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
-import io.opentelemetry.opamp.client.domain.server.TelemetryConnectionSettingsDomain;
+import io.opentelemetry.opamp.client.domain.server.*;
 import io.opentelemetry.opamp.common.util.UUIDUtil;
 import opamp.proto.Opamp;
 import org.springframework.stereotype.Component;
@@ -40,6 +37,10 @@ public class ServerToAgentMapper {
             builder.setRemoteConfig(mapperToProtoAgentRemoteConfig(serverToAgentDomain.agentRemoteConfig()));
         if (Objects.nonNull(serverToAgentDomain.connectionSettingsOffers())) {
             builder.setConnectionSettings(mapperToProtoConnectionSettingsOffers(serverToAgentDomain.connectionSettingsOffers()));
+        }
+        if (Objects.nonNull(serverToAgentDomain.command())) {
+            if (serverToAgentDomain.command().commandType().equals(CommandType.RESTART))
+                builder.setCommand(Opamp.ServerToAgentCommand.newBuilder().setType(Opamp.CommandType.CommandType_Restart).build());
         }
         return builder.build();
     }

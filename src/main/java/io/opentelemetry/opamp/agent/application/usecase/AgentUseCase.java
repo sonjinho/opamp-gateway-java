@@ -14,10 +14,13 @@ public interface AgentUseCase {
 
     void saveAgent(AgentToServerDomain agentToServer);
 
-    void updateRemoteConfig(UpdateAgentConfigCommand command);
+    boolean updateRemoteConfig(UpdateAgentConfigCommand command);
 
     boolean changeAgentId(ChangeAgentIdCommand command);
 
     List<AgentDomain> loadAllAgents(SearchAgentsCommand command);
 
+    boolean restart(UUID instanceId);
+
+    boolean changeOwnTelemetry(UUID targetId, UUID ownTelemetryId);
 }
