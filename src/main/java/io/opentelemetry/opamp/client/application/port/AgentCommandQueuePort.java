@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AgentCommandQueuePort {
-    void enqueue(ServerToAgentEventCommand event);
+    boolean enqueue(ServerToAgentEventCommand event);
 
     Optional<ServerToAgentDomain> pollNextCommand(UUID uuid);
 }

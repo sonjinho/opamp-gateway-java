@@ -2,6 +2,7 @@ package io.opentelemetry.opamp.agent.application.usecase;
 
 import io.opentelemetry.opamp.agent.application.command.SearchAgentsCommand;
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
+import io.opentelemetry.opamp.client.application.command.ChangeAgentIdCommand;
 import io.opentelemetry.opamp.client.application.command.UpdateAgentConfigCommand;
 import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
 
@@ -15,7 +16,7 @@ public interface AgentUseCase {
 
     void updateRemoteConfig(UpdateAgentConfigCommand command);
 
-    Long requestFlag(UUID uuid);
+    boolean changeAgentId(ChangeAgentIdCommand command);
 
     List<AgentDomain> loadAllAgents(SearchAgentsCommand command);
 

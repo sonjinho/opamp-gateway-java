@@ -6,16 +6,16 @@ import io.opentelemetry.opamp.client.domain.server.ServerToAgentFlags;
 
 import java.util.UUID;
 
-public record ChangeAgentIdCommand(UUID agentId, UUID newAgentId) implements ServerToAgentEventCommand {
+public record ChangeAgentIdCommand(UUID targetId, UUID newAgentId) implements ServerToAgentEventCommand {
     @Override
     public UUID targetId() {
-        return agentId;
+        return targetId;
     }
 
     @Override
     public ServerToAgentDomain toDomain() {
         return ServerToAgentDomain.builder()
-                .instanceId(agentId)
+                .instanceId(targetId)
                 .flags(ServerToAgentFlags.UNSPECIFIED.val())
                 .agentIdentification(new AgentIdentificationDomain(newAgentId))
                 .build();

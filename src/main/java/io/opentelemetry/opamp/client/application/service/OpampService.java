@@ -7,7 +7,6 @@ import io.opentelemetry.opamp.client.application.port.UpdateAgentToServerPort;
 import io.opentelemetry.opamp.client.application.usecase.OpampUseCase;
 import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
-import io.opentelemetry.opamp.client.domain.server.ServerToAgentFlags;
 import io.opentelemetry.opamp.common.util.OPAMPUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,23 +29,15 @@ public class OpampService implements OpampUseCase {
     public ServerToAgentDomain handleRequest(AgentToServerDomain request) {
         AgentToServerDomain recent = loadAgentToServerPort.loadAgentToServer(request.instanceId());
         updateAgentToServerPort.saveAgentToServer(request);
-        if (recent == null || !recent.equals(request)) {
+        if (recent == null) {
             agentUseCase.saveAgent(request);
-            agentUseCase.loadAgent(request.instanceId());
-            // init
-            return createInitResponse(request);
-        } else {
-            // pong
-            Optional<ServerToAgentDomain> resp = agentCommandQueuePort.pollNextCommand(request.instanceId());
-            return resp.orElseGet(() -> OPAMPUtil.INSTANCE.createPong(request.instanceId()));
+            return OPAMPUtil.INSTANCE.createInitResponse(request.instanceId(), request.capabilities());
+        } else if (!recent.equals(request)) {
+            agentUseCase.saveAgent(request);
         }
+        Optional<ServerToAgentDomain> resp = agentCommandQueuePort.pollNextCommand(request.instanceId());
+        // No Event Then Pong
+        return resp.orElseGet(() -> OPAMPUtil.INSTANCE.createPong(request.instanceId()));
     }
 
-    private ServerToAgentDomain createInitResponse(AgentToServerDomain request) {
-        return ServerToAgentDomain.builder()
-                .instanceId(request.instanceId())
-                .flags(ServerToAgentFlags.REPORT_FULL_STATE.val() & ServerToAgentFlags.REPORT_AVAILABLE_COMPONENTS.val())
-                .capabilities(request.capabilities())
-                .build();
-    }
 }

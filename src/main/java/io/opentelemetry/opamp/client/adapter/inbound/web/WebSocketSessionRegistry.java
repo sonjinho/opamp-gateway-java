@@ -41,9 +41,9 @@ public class WebSocketSessionRegistry {
         if (agentId != null) {
             agentSessionMap.remove(agentId);
             agentSessionIdMap.remove(sessionId);
-            log.info("Unregistered session for agentId: {}", agentId);
+            log.info("Unregistered session for targetId: {}", agentId);
         } else {
-            log.warn("Could not find agentId for sessionId: {}", sessionId);
+            log.warn("Could not find targetId for sessionId: {}", sessionId);
         }
     }
 

@@ -20,10 +20,10 @@ public class AgentCommandQueueInMemoryAdapter implements AgentCommandQueuePort {
     Map<UUID, Queue<ServerToAgentEventCommand>> commands = new ConcurrentHashMap<>();
 
     @Override
-    public void enqueue(ServerToAgentEventCommand event) {
+    public boolean enqueue(ServerToAgentEventCommand event) {
         Queue<ServerToAgentEventCommand> queue = commands.getOrDefault(event.targetId(), new ArrayBlockingQueue<>(1000));
         commands.put(event.targetId(), queue);
-        queue.add(event);
+        return queue.add(event);
     }
 
     @Override
