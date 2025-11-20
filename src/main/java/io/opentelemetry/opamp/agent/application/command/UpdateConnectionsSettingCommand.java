@@ -1,7 +1,7 @@
 package io.opentelemetry.opamp.agent.application.command;
 
-import io.opentelemetry.opamp.gateway.domain.server.OtherConnectionSettingsDomain;
-import io.opentelemetry.opamp.gateway.domain.server.TelemetryConnectionSettingsDomain;
+import io.opentelemetry.opamp.client.domain.server.OtherConnectionSettingsDomain;
+import io.opentelemetry.opamp.client.domain.server.TelemetryConnectionSettingsDomain;
 
 import java.util.Map;
 import java.util.UUID;

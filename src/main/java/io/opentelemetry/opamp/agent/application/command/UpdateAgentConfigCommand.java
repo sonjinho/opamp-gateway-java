@@ -1,6 +1,6 @@
 package io.opentelemetry.opamp.agent.application.command;
 
-import io.opentelemetry.opamp.gateway.domain.server.AgentRemoteConfigDomain;
+import io.opentelemetry.opamp.client.domain.server.AgentRemoteConfigDomain;
 
 import java.util.UUID;
 

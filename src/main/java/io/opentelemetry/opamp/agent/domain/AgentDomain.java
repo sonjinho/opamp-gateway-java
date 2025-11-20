@@ -1,6 +1,6 @@
 package io.opentelemetry.opamp.agent.domain;
 
-import io.opentelemetry.opamp.gateway.domain.agent.*;
+import io.opentelemetry.opamp.client.domain.agent.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

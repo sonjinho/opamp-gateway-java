@@ -1,6 +1,6 @@
 package io.opentelemetry.opamp.config.web;
 
-import io.opentelemetry.opamp.gateway.adapter.inbound.web.OpampWebSocketHandler;
+import io.opentelemetry.opamp.client.adapter.inbound.web.OpampWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -17,7 +17,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         // OpampWebSocketHandler를 '/opamp-websocket' URL에 등록합니다.
-        registry.addHandler(opampWebSocketHandler, "/api/v1/opamp-ws")
+        registry.addHandler(opampWebSocketHandler, "/v1/opamp")
                 .setAllowedOrigins("*");
     }
 }

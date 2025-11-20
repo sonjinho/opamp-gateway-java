@@ -6,9 +6,9 @@ import io.opentelemetry.opamp.agent.application.port.LoadAgentPort;
 import io.opentelemetry.opamp.agent.application.port.UpdateAgentPort;
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
-import io.opentelemetry.opamp.gateway.application.port.AgentPushPort;
-import io.opentelemetry.opamp.gateway.domain.agent.AgentToServerDomain;
-import io.opentelemetry.opamp.gateway.domain.server.ServerToAgentDomain;
+import io.opentelemetry.opamp.client.application.port.AgentPushPort;
+import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
+import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static io.opentelemetry.opamp.client.domain.server.ServerToAgentFlags.*;
 import static io.opentelemetry.opamp.config.redis.RedisConfig.AGENT_DOMAIN_CACHE;
 
 @Slf4j
@@ -45,19 +46,19 @@ public class AgentService implements AgentUseCase {
     public Long requestFlag(UUID uuid) {
         AgentDomain agent = loadAgentPort.loadAgent(uuid);
         if (agent == null) {
-            return (long) (1 & 2);
+            return (REPORT_FULL_STATE.val() & REPORT_AVAILABLE_COMPONENTS.val());
         }
         // updated Before 10 minute
         // agent.createAt before current - 10min
         if (agent.createdAt().plusMinutes(10).isBefore(java.time.LocalDateTime.now())) {
-            return (long) (1 & 2);
+            return (REPORT_FULL_STATE.val() & REPORT_AVAILABLE_COMPONENTS.val());
         }
 
         if (agent.disconnectedAt() != null) {
-            return (long) (1 & 2);
+            return (REPORT_FULL_STATE.val() & REPORT_AVAILABLE_COMPONENTS.val());
         }
 
-        return 0L;
+        return UNSPECIFIED.val();
     }
 
     @CacheEvict(value = AGENT_DOMAIN_CACHE, key = "#agentToServer.instanceId().toString()")
@@ -85,7 +86,7 @@ public class AgentService implements AgentUseCase {
             throw new EntityNotFoundException("Agent not found");
         }
         var response = ServerToAgentDomain.builder()
-                .flags(0L)
+                .flags(UNSPECIFIED.val())
                 .instanceId(agent.instanceUId())
                 .agentRemoteConfig(command.agentRemoteConfig())
                 .build();

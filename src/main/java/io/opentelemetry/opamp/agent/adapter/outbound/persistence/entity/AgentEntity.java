@@ -1,7 +1,7 @@
 package io.opentelemetry.opamp.agent.adapter.outbound.persistence.entity;
 
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
-import io.opentelemetry.opamp.gateway.domain.agent.*;
+import io.opentelemetry.opamp.client.domain.agent.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

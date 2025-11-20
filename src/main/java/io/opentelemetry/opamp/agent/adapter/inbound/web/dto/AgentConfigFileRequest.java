@@ -1,6 +1,6 @@
 package io.opentelemetry.opamp.agent.adapter.inbound.web.dto;
 
-import io.opentelemetry.opamp.gateway.domain.agent.AgentConfigFileDomain;
+import io.opentelemetry.opamp.client.domain.agent.AgentConfigFileDomain;
 
 import java.util.Base64;
 
