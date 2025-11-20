@@ -1,5 +1,8 @@
 package io.opentelemetry.opamp.client.domain.agent;
 
+import io.opentelemetry.opamp.client.domain.server.CustomCapabilitiesDomain;
+import io.opentelemetry.opamp.client.domain.server.CustomMessageDomain;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -7,11 +10,32 @@ import java.util.UUID;
 public record AgentToServerDomain(UUID instanceId, Long seqNum, AgentDescriptionDomain description, Long capabilities,
                                   AgentComponentHealthDomain componentHealth, EffectiveConfigDomain effectiveConfig,
                                   RemoteConfigStatusDomain remoteConfigStatus, PackageStatusesDomain packagesStatuses,
-                                  AgentDisconnectDomain agentDisconnect, Long flags, LocalDateTime createdAt,
+                                  AgentDisconnectDomain agentDisconnect, Long flags,
+                                  ConnectionSettingsRequestDomain connectionSettingsRequest,
+                                  CustomCapabilitiesDomain customCapabilities, CustomMessageDomain customMessage,
+                                  AvailableComponentsDomain availableComponents,
+                                  ConnectionSettingsStatusDomain connectionSettingsStatus,
+                                  LocalDateTime createdAt,
                                   LocalDateTime disconnectedAt) {
 
-    public AgentToServerDomain(UUID instanceId, Long seqNum, AgentDescriptionDomain description, Long capabilities, AgentComponentHealthDomain componentHealth, EffectiveConfigDomain effectiveConfig, RemoteConfigStatusDomain remoteConfigStatus, PackageStatusesDomain packagesStatus, AgentDisconnectDomain agentDisconnect, Long flags) {
-        this(instanceId, seqNum, description, capabilities, componentHealth, effectiveConfig, remoteConfigStatus, packagesStatus, agentDisconnect, flags, LocalDateTime.now(), null);
+    public AgentToServerDomain(
+            UUID instanceId,
+            Long seqNum,
+            AgentDescriptionDomain description,
+            Long capabilities,
+            AgentComponentHealthDomain componentHealth,
+            EffectiveConfigDomain effectiveConfig,
+            RemoteConfigStatusDomain remoteConfigStatus,
+            PackageStatusesDomain packagesStatus,
+            AgentDisconnectDomain agentDisconnect,
+            Long flags,
+            ConnectionSettingsRequestDomain connectionSettingsRequest,
+            CustomCapabilitiesDomain customCapabilities,
+            CustomMessageDomain customMessage,
+            AvailableComponentsDomain availableComponents,
+            ConnectionSettingsStatusDomain connectionSettingsStatus
+    ) {
+        this(instanceId, seqNum, description, capabilities, componentHealth, effectiveConfig, remoteConfigStatus, packagesStatus, agentDisconnect, flags, connectionSettingsRequest, customCapabilities, customMessage, availableComponents, connectionSettingsStatus, LocalDateTime.now(), null);
     }
 
 

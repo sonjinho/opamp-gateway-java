@@ -6,13 +6,11 @@ import io.opentelemetry.opamp.client.application.port.UpdateAgentToServerPort;
 import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Slf4j
-@ConditionalOnProperty(name = "request.persistence.type", havingValue = "FILE")
 @Component
 @RequiredArgsConstructor
 public class AgentToServerFilePersistenceAdapter implements LoadAgentToServerPort, UpdateAgentToServerPort {

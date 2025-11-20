@@ -8,7 +8,6 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
@@ -23,7 +22,6 @@ import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 @Slf4j
-@ConditionalOnProperty(name = "request.persistence.type", havingValue = "FILE")
 @Component
 public class LocalFileStorageService implements FileStorageService {
     private static final int BATCH_SIZE = 500;
