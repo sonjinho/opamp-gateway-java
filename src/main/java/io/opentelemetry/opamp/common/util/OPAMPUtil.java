@@ -62,7 +62,7 @@ public enum OPAMPUtil {
     public ServerToAgentDomain createInitResponse(UUID instanceId, Long capabilities) {
         return ServerToAgentDomain.builder()
                 .instanceId(instanceId)
-                .flags(ServerToAgentFlags.REPORT_FULL_STATE.val() & ServerToAgentFlags.REPORT_AVAILABLE_COMPONENTS.val())
+                .flags(ServerToAgentFlags.REPORT_FULL_STATE.val() | ServerToAgentFlags.REPORT_AVAILABLE_COMPONENTS.val())
                 .capabilities(capabilities)
                 .build();
     }

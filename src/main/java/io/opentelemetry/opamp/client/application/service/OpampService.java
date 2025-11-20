@@ -7,6 +7,7 @@ import io.opentelemetry.opamp.client.application.port.UpdateAgentToServerPort;
 import io.opentelemetry.opamp.client.application.usecase.OpampUseCase;
 import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
+import io.opentelemetry.opamp.client.mapper.AgentCapabilitiesHandler;
 import io.opentelemetry.opamp.common.util.OPAMPUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,10 @@ public class OpampService implements OpampUseCase {
         updateAgentToServerPort.saveAgentToServer(request);
         if (recent == null) {
             agentUseCase.saveAgent(request);
-            return OPAMPUtil.INSTANCE.createInitResponse(request.instanceId(), request.capabilities());
+
+            return OPAMPUtil.INSTANCE.createInitResponse(request.instanceId(), AgentCapabilitiesHandler.enableAllCapabilities());
         } else if (!recent.equals(request)) {
+            // The problem is here
             agentUseCase.saveAgent(request);
         }
         Optional<ServerToAgentDomain> resp = agentCommandQueuePort.pollNextCommand(request.instanceId());

@@ -26,6 +26,9 @@ public class AgentCapabilitiesHandler {
         return (capabilities & capability) != 0;
     }
 
+    public static long enableAllCapabilities() {
+        return REPORTS_STATUS | ACCEPTS_REMOTE_CONFIG | REPORTS_EFFECTIVE_CONFIG | ACCEPTS_PACKAGES | REPORTS_PACKAGE_STATUSES | REPORTS_OWN_TRACES | REPORTS_OWN_METRICS | REPORTS_OWN_LOGS | ACCEPTS_OPAMP_CONNECTION_SETTINGS | ACCEPTS_OTHER_CONNECTION_SETTINGS | ACCEPTS_RESTART_COMMAND | REPORTS_HEALTH | REPORTS_REMOTE_CONFIG | REPORTS_HEARTBEAT;
+    }
     // capability 설정
     public static long addCapability(long capabilities, long capability) {
         return capabilities | capability;

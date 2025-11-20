@@ -61,7 +61,7 @@ public class AgentService implements AgentUseCase {
         return loadAgentPort.loadAgent(uuid);
     }
 
-    @CacheEvict(value = AGENT_DOMAIN_CACHE, key = "#agentToServer.targetId().toString()")
+    @CacheEvict(value = AGENT_DOMAIN_CACHE, key = "#agentToServer.instanceId().toString()")
     @Override
     public void saveAgent(AgentToServerDomain agentToServer) {
         var agent = new AgentDomain(

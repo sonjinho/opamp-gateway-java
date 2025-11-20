@@ -61,7 +61,7 @@ public class AgentController {
         return new ResponseEventDTO(result, result ? "" : "Failed to restart agent");
     }
 
-    @PutMapping("/${targetId}/own-telemetry/${telemetryId}")
+    @PutMapping("/{targetId}/own-telemetry/{telemetryId}")
     public ResponseEventDTO ownTelemetryConnection(@PathVariable("targetId") UUID targetId, @PathVariable("telemetryId") UUID telemetryId) {
         boolean result = agentUseCase.changeOwnTelemetry(targetId, telemetryId);
         return new ResponseEventDTO(result, result ? "" : "Failed to change own telemetry");

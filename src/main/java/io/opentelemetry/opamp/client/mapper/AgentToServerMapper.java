@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -45,8 +46,8 @@ public class AgentToServerMapper {
     }
 
     public AgentComponentHealthDomain mapperToAgentComponentHealthDomain(Opamp.ComponentHealth componentHealth) {
+        if (Objects.isNull(componentHealth)) return null;
         Map<String, AgentComponentHealthDomain> componentHealthMap = new HashMap<>();
-        if (componentHealth.getComponentHealthMapMap().isEmpty()) return null;
         for (Map.Entry<String, Opamp.ComponentHealth> entry : componentHealth.getComponentHealthMapMap().entrySet()) {
             componentHealthMap.put(entry.getKey(), this.mapperToAgentComponentHealthDomain(entry.getValue()));
         }

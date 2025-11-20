@@ -21,8 +21,12 @@ public class ServerToAgentMapper {
                 .setInstanceUid(ByteString.copyFrom(UUIDUtil.INSTANCE.convertUUIDToBytes(serverToAgentDomain.instanceId())))
                 .setCapabilities(
                         AgentCapabilitiesHandler.addCapability(List.of(REPORTS_STATUS, ACCEPTS_REMOTE_CONFIG, REPORTS_EFFECTIVE_CONFIG, REPORTS_HEALTH, REPORTS_REMOTE_CONFIG, REPORTS_HEARTBEAT, REPORTS_OWN_LOGS, REPORTS_OWN_METRICS, REPORTS_OWN_TRACES))
-                )
-                .setFlags(serverToAgentDomain.flags());
+                );
+        if (Objects.nonNull(serverToAgentDomain.flags())) {
+            builder.setFlags(serverToAgentDomain.flags());
+        } else {
+            builder.setFlags(ServerToAgentFlags.UNSPECIFIED.val());
+        }
         if (Objects.nonNull(serverToAgentDomain.agentIdentification())) {
             builder.setAgentIdentification(Opamp.AgentIdentification.newBuilder()
                     .setNewInstanceUid(
