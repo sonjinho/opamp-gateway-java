@@ -3,6 +3,7 @@ package io.opentelemetry.opamp.client.adapter.inbound.web;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.opentelemetry.opamp.client.application.usecase.OpampUseCase;
 import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
+import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
 import io.opentelemetry.opamp.client.mapper.AgentToServerMapper;
 import io.opentelemetry.opamp.client.mapper.ServerToAgentMapper;
 import io.opentelemetry.opamp.common.util.OPAMPUtil;
@@ -14,6 +15,8 @@ import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -34,7 +37,12 @@ public class OpampWebSocketHandler extends AbstractWebSocketHandler {
             log.debug("Received OpAMP message: {}", requestBody);
             AgentToServerDomain agentToServerDomain = agentToServerMapper.mapperToDomain(requestBody);
             registry.register(agentToServerDomain.instanceId(), session);
-            service.publishRequest(agentToServerDomain);
+            log.info("Received SessionId: {}, AgentId: {}", session.getId(), agentToServerDomain.instanceId());
+            ServerToAgentDomain response = service.handleRequest(agentToServerDomain);
+            if (Objects.nonNull(response)) {
+                byte[] responseBytes = OPAMPUtil.INSTANCE.encodeOpampWS(serverToAgentMapper.mapperToProto(response));
+                session.sendMessage(new BinaryMessage(responseBytes));
+            }
 
         } catch (InvalidProtocolBufferException e) {
             log.error("Failed to parse Protobuf: {}", e.getMessage());

@@ -1,6 +1,7 @@
 package io.opentelemetry.opamp.client.adapter.outbound.websocket;
 
 import io.opentelemetry.opamp.client.adapter.inbound.web.WebSocketSessionRegistry;
+import io.opentelemetry.opamp.client.application.port.AgentCommandQueuePort;
 import io.opentelemetry.opamp.client.application.port.AgentPushPort;
 import io.opentelemetry.opamp.client.domain.server.ConnectionSettingsOffersDomain;
 import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
@@ -10,6 +11,7 @@ import io.opentelemetry.opamp.common.util.OPAMPUtil;
 import io.opentelemetry.opamp.owntelemetry.domain.OwnTelemetrySetting;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -25,8 +27,25 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class WebSocketAgentPushAdapter implements AgentPushPort {
 
+    private static final Integer MAX_POLL = 10;
     private final WebSocketSessionRegistry registry;
     private final ServerToAgentMapper mapper;
+    private final AgentCommandQueuePort queuePort;
+
+    @Scheduled(fixedDelay = 500)
+    public void dispatchPendingCommands() {
+        for (UUID agentId : registry.connectedAgents()) {
+            dispatchForAgent(agentId);
+        }
+    }
+
+    private void dispatchForAgent(UUID agentId) {
+        for (int i = 0; i < MAX_POLL; i++) {
+            Optional<ServerToAgentDomain> command = queuePort.pollNextCommand(agentId);
+            if (command.isEmpty()) break;
+            push(agentId, command.get());
+        }
+    }
 
     @Override
     public void push(UUID agentId, ServerToAgentDomain serverToAgentDomain) {
@@ -34,8 +53,12 @@ public class WebSocketAgentPushAdapter implements AgentPushPort {
         if (session.isPresent()) {
             byte[] responseBytes = OPAMPUtil.INSTANCE.encodeOpampWS(mapper.mapperToProto(serverToAgentDomain));
             try {
-                session.get().sendMessage(new BinaryMessage(responseBytes));
+                var wsSession = session.get();
+                if (wsSession.isOpen()) {
+                    wsSession.sendMessage(new BinaryMessage(responseBytes));
+                }
             } catch (IOException e) {
+                // Handle Retry or Failed
                 log.error("Failed to send OpAMP message to agent {}", agentId, e);
             }
         }

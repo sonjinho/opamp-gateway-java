@@ -1,15 +1,19 @@
 package io.opentelemetry.opamp.client.application.service;
 
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
-import io.opentelemetry.opamp.client.application.port.AgentPushPort;
+import io.opentelemetry.opamp.client.application.port.AgentCommandQueuePort;
 import io.opentelemetry.opamp.client.application.port.LoadAgentToServerPort;
 import io.opentelemetry.opamp.client.application.port.UpdateAgentToServerPort;
 import io.opentelemetry.opamp.client.application.usecase.OpampUseCase;
 import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
 import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
+import io.opentelemetry.opamp.client.domain.server.ServerToAgentFlags;
+import io.opentelemetry.opamp.common.util.OPAMPUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -19,39 +23,30 @@ public class OpampService implements OpampUseCase {
     private final AgentUseCase agentUseCase;
     private final LoadAgentToServerPort loadAgentToServerPort;
     private final UpdateAgentToServerPort updateAgentToServerPort;
-    private final AgentPushPort agentPushPort;
+    private final AgentCommandQueuePort agentCommandQueuePort;
 
+    // HTTP pull
     @Override
-    public ServerToAgentDomain processRequest(AgentToServerDomain request) {
+    public ServerToAgentDomain handleRequest(AgentToServerDomain request) {
         AgentToServerDomain recent = loadAgentToServerPort.loadAgentToServer(request.instanceId());
         updateAgentToServerPort.saveAgentToServer(request);
-        Long flag = 0L;
         if (recent == null || !recent.equals(request)) {
             agentUseCase.saveAgent(request);
             agentUseCase.loadAgent(request.instanceId());
+            // init
+            return createInitResponse(request);
+        } else {
+            // pong
+            Optional<ServerToAgentDomain> resp = agentCommandQueuePort.pollNextCommand(request.instanceId());
+            return resp.orElseGet(() -> OPAMPUtil.INSTANCE.createPong(request.instanceId()));
         }
-        return ServerToAgentDomain.builder()
-                .instanceId(request.instanceId())
-                .capabilities(request.capabilities())
-                .flags(flag)
-                .build();
     }
 
-    @Override
-    public void publishRequest(AgentToServerDomain request) {
-        AgentToServerDomain recent = loadAgentToServerPort.loadAgentToServer(request.instanceId());
-        updateAgentToServerPort.saveAgentToServer(request);
-        Long flag = 0L;
-        if (recent == null || !recent.equals(request)) {
-            // init agent
-            agentUseCase.saveAgent(request);
-            agentUseCase.loadAgent(request.instanceId());
-            ServerToAgentDomain initResp = ServerToAgentDomain.builder()
-                    .instanceId(request.instanceId())
-                    .capabilities(request.capabilities())
-                    .flags(flag)
-                    .build();
-            agentPushPort.push(request.instanceId(), initResp);
-        }
+    private ServerToAgentDomain createInitResponse(AgentToServerDomain request) {
+        return ServerToAgentDomain.builder()
+                .instanceId(request.instanceId())
+                .flags(ServerToAgentFlags.REPORT_FULL_STATE.val() & ServerToAgentFlags.REPORT_AVAILABLE_COMPONENTS.val())
+                .capabilities(request.capabilities())
+                .build();
     }
 }

@@ -26,6 +26,16 @@ public class ServerToAgentMapper {
                         AgentCapabilitiesHandler.addCapability(List.of(REPORTS_STATUS, ACCEPTS_REMOTE_CONFIG, REPORTS_EFFECTIVE_CONFIG, REPORTS_HEALTH, REPORTS_REMOTE_CONFIG, REPORTS_HEARTBEAT, REPORTS_OWN_LOGS, REPORTS_OWN_METRICS, REPORTS_OWN_TRACES))
                 )
                 .setFlags(serverToAgentDomain.flags());
+        if (Objects.nonNull(serverToAgentDomain.agentIdentification())) {
+            builder.setAgentIdentification(Opamp.AgentIdentification.newBuilder()
+                    .setNewInstanceUid(
+                            ByteString.copyFrom(
+                                    UUIDUtil.INSTANCE.convertUUIDToBytes(
+                                            serverToAgentDomain.agentIdentification().newInstanceUid()
+                                    )
+                            )
+                    ));
+        }
         if (Objects.nonNull(serverToAgentDomain.agentRemoteConfig()))
             builder.setRemoteConfig(mapperToProtoAgentRemoteConfig(serverToAgentDomain.agentRemoteConfig()));
         if (Objects.nonNull(serverToAgentDomain.connectionSettingsOffers())) {

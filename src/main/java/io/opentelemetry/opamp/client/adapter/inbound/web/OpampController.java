@@ -25,7 +25,7 @@ public class OpampController {
     public Opamp.ServerToAgent opamp(@RequestBody() Opamp.AgentToServer requestBody) {
         var agentToServer = agentToServerMapper.mapperToDomain(requestBody);
         log.debug("Agent To Server Request {}:", agentToServer);
-        var serverToAgent = service.processRequest(agentToServer);
+        var serverToAgent = service.handleRequest(agentToServer);
         return serverToAgentMapper.mapperToProto(serverToAgent);
     }
 

@@ -1,14 +1,13 @@
 package io.opentelemetry.opamp.agent.application.service;
 
 import io.opentelemetry.opamp.agent.application.command.SearchAgentsCommand;
-import io.opentelemetry.opamp.agent.application.command.UpdateAgentConfigCommand;
 import io.opentelemetry.opamp.agent.application.port.LoadAgentPort;
 import io.opentelemetry.opamp.agent.application.port.UpdateAgentPort;
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
-import io.opentelemetry.opamp.client.application.port.AgentPushPort;
+import io.opentelemetry.opamp.client.application.command.UpdateAgentConfigCommand;
+import io.opentelemetry.opamp.client.application.port.AgentCommandQueuePort;
 import io.opentelemetry.opamp.client.domain.agent.AgentToServerDomain;
-import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class AgentService implements AgentUseCase {
 
     private final LoadAgentPort loadAgentPort;
     private final UpdateAgentPort updateAgentPort;
-    private final AgentPushPort agentPushPort;
+    private final AgentCommandQueuePort agentCommandQueuePort;
 
     @Override
     public List<AgentDomain> loadAllAgents(SearchAgentsCommand command) {
@@ -61,7 +60,7 @@ public class AgentService implements AgentUseCase {
         return UNSPECIFIED.val();
     }
 
-    @CacheEvict(value = AGENT_DOMAIN_CACHE, key = "#agentToServer.instanceId().toString()")
+    @CacheEvict(value = AGENT_DOMAIN_CACHE, key = "#agentToServer.agentId().toString()")
     @Override
     public void saveAgent(AgentToServerDomain agentToServer) {
         var agent = new AgentDomain(
@@ -81,22 +80,11 @@ public class AgentService implements AgentUseCase {
 
     @Override
     public void updateRemoteConfig(UpdateAgentConfigCommand command) {
-        AgentDomain agent = loadAgentPort.loadAgent(command.instanceId());
+        AgentDomain agent = loadAgentPort.loadAgent(command.agentId());
         if (agent == null) {
             throw new EntityNotFoundException("Agent not found");
         }
-        var response = ServerToAgentDomain.builder()
-                .flags(UNSPECIFIED.val())
-                .instanceId(agent.instanceUId())
-                .agentRemoteConfig(command.agentRemoteConfig())
-                .build();
-        agentPushPort.push(agent.instanceUId(), response);
+        agentCommandQueuePort.enqueue(command);
     }
-
-    @Override
-    public void updateAgent(ServerToAgentDomain serverToAgentDomain) {
-        agentPushPort.push(serverToAgentDomain.instanceId(), serverToAgentDomain);
-    }
-
 
 }

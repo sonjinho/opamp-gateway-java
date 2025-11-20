@@ -2,9 +2,9 @@ package io.opentelemetry.opamp.agent.adapter.inbound.web;
 
 import io.opentelemetry.opamp.agent.adapter.inbound.web.dto.AgentRemoteConfigDTO;
 import io.opentelemetry.opamp.agent.application.command.SearchAgentsCommand;
-import io.opentelemetry.opamp.agent.application.command.UpdateAgentConfigCommand;
 import io.opentelemetry.opamp.agent.application.usecase.AgentUseCase;
 import io.opentelemetry.opamp.agent.domain.AgentDomain;
+import io.opentelemetry.opamp.client.application.command.UpdateAgentConfigCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,22 +27,21 @@ public class AgentController {
         return agentUseCase.loadAllAgents(SearchAgentsCommand.builder().active(true).build());
     }
 
-    // GET agent by instanceId
-    @GetMapping("/{instanceId}")
-    public AgentDomain getAgent(@PathVariable("instanceId") UUID instanceId) {
+    // GET agent by agentId
+    @GetMapping("/{agentId}")
+    public AgentDomain getAgent(@PathVariable("agentId") UUID instanceId) {
         return agentUseCase.loadAgent(instanceId);
     }
 
-    @PutMapping("/{instanceId}")
-    public AgentDomain updateAgent(@PathVariable("instanceId") UUID instanceId) {
+    @PutMapping("/{agentId}")
+    public AgentDomain updateAgent(@PathVariable("agentId") UUID instanceId) {
         return agentUseCase.loadAgent(instanceId);
     }
 
-    @PutMapping("/{instanceId}/config")
-    public AgentDomain updateRemoteConfig(@PathVariable("instanceId") UUID instanceId, @RequestBody AgentRemoteConfigDTO remoteConfigDTO) {
+    @PutMapping("/{agentId}/config")
+    public AgentDomain updateRemoteConfig(@PathVariable("agentId") UUID instanceId, @RequestBody AgentRemoteConfigDTO remoteConfigDTO) {
         agentUseCase.updateRemoteConfig(new UpdateAgentConfigCommand(instanceId, remoteConfigDTO.toDomain()));
         return agentUseCase.loadAgent(instanceId);
     }
-
 
 }

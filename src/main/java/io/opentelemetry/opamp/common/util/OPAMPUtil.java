@@ -1,10 +1,13 @@
 package io.opentelemetry.opamp.common.util;
 
 import com.google.protobuf.MessageLite;
+import io.opentelemetry.opamp.client.domain.server.ServerToAgentDomain;
+import io.opentelemetry.opamp.client.domain.server.ServerToAgentFlags;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Slf4j
 public enum OPAMPUtil {
@@ -50,5 +53,9 @@ public enum OPAMPUtil {
         System.arraycopy(protoBytes, 0, result, header.length, protoBytes.length);
 
         return result;
+    }
+
+    public ServerToAgentDomain createPong(UUID instanceId) {
+        return ServerToAgentDomain.builder().instanceId(instanceId).flags(ServerToAgentFlags.UNSPECIFIED.val()).build();
     }
 }

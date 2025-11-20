@@ -24,6 +24,12 @@ public class WebSocketSessionRegistry {
                 unregister(oldSession.getId());
             }
         } else {
+            if (agentSessionIdMap.containsKey(session.getId())) {
+                // session change the agentID
+                UUID oldAgentId = agentSessionIdMap.get(session.getId());
+                agentSessionMap.remove(oldAgentId);
+                agentSessionIdMap.remove(session.getId());
+            }
             agentSessionMap.put(agentId, session);
             agentSessionIdMap.put(session.getId(), agentId);
         }
@@ -47,5 +53,9 @@ public class WebSocketSessionRegistry {
 
     public Collection<WebSocketSession> getSessions() {
         return agentSessionMap.values();
+    }
+
+    public Collection<UUID> connectedAgents() {
+        return agentSessionMap.entrySet().stream().filter(entry -> entry.getValue().isOpen()).map(Map.Entry::getKey).toList();
     }
 }
